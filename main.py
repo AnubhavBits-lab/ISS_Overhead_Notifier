@@ -2,7 +2,7 @@ import smtplib
 import requests
 from datetime import datetime
 import os
-
+import time 
 MY_EMAIL = os.environ.get("MY_EMAIL")
 MY_PASSWORD = os.environ.get("ISS_PASSWORD")
 response = requests.get(url="http://api.open-notify.org/iss-now.json")
@@ -46,14 +46,14 @@ if sunset_m>=30:
     sunset_h+=1
 else:
     sunset_m = sunset_m+30
-
+time.sleep(60)
 time_now = datetime.now()
-
-if checkpos():
-    if time_now.hour > sunset_h or time_now.hour < sunrise_h:
-        with smtplib.SMTP('smtp.gmail.com', 587) as connection:
-            connection.starttls()
-            connection.login(user=MY_EMAIL, password=MY_PASSWORD)
-            connection.sendmail(from_addr=MY_EMAIL, to_addrs="SEND_EMAIL", msg=f"Look up! ISS is above you :)")
+while True:
+    if checkpos():
+        if time_now.hour > sunset_h or time_now.hour < sunrise_h:
+            with smtplib.SMTP('smtp.gmail.com', 587) as connection:
+                connection.starttls()
+                connection.login(user=MY_EMAIL, password=MY_PASSWORD)
+                connection.sendmail(from_addr=MY_EMAIL, to_addrs="SEND_EMAIL", msg=f"Look up! ISS is above you :)")
 
 print(iss_latitude, iss_longitude)
